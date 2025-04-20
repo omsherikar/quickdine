@@ -25,7 +25,7 @@ import ClassManagement from '../components/ClassManagement';
 import AttendanceHistory from '../components/AttendanceHistory';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
-import AttendanceStats from '../components/AttendanceStats';
+import AttendanceStats from '../components/AttendanceStats.tsx';
 
 interface TabPanelProps {
   children?: React.ReactNode;
