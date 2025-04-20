@@ -1,98 +1,251 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Attendance System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A modern, full-stack attendance management system built with React, TypeScript, NestJS, and MongoDB.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🔐 **Authentication & Authorization**
+  - User registration and login
+  - Role-based access control (Admin, Teacher, Student)
+  - JWT-based authentication
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- 📊 **Attendance Management**
+  - Real-time attendance marking
+  - Attendance history tracking
+  - Attendance statistics and analytics
+  - Class-wise attendance reports
 
-## Project setup
+- 👥 **Class Management**
+  - Create and manage classes
+  - Add/remove students from classes
+  - Class-wise attendance tracking
 
+- 📱 **Modern UI/UX**
+  - Responsive design
+  - Dark/Light theme support
+  - Real-time updates
+  - Interactive dashboards
+
+## Tech Stack
+
+### Frontend
+- React with TypeScript
+- Vite for build tooling
+- Material-UI for components
+- React Query for data fetching
+- WebSocket for real-time updates
+
+### Backend
+- NestJS
+- MongoDB
+- JWT Authentication
+- WebSocket Gateway
+- Redis for caching
+
+## Prerequisites
+
+- Node.js (v16 or higher)
+- MongoDB
+- Redis
+- npm or yarn
+
+## Installation
+
+1. Clone the repository:
 ```bash
-$ npm install
+git clone https://github.com/omsherikar/Attendance_System.git
+cd Attendance_System
 ```
 
-## Compile and run the project
-
+2. Install dependencies:
 ```bash
-# development
-$ npm run start
+# Install backend dependencies
+npm install
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Install frontend dependencies
+cd frontend
+npm install
 ```
 
-## Run tests
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following variables:
+```env
+# Backend
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+REDIS_URL=your_redis_url
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Frontend
+VITE_API_URL=http://localhost:3000
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+4. Start the development servers:
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Start backend server
+npm run start:dev
+
+# Start frontend server (in a new terminal)
+cd frontend
+npm run dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The application will be available at:
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
-## Resources
+## Project Structure
 
-Check out a few resources that may come in handy when working with NestJS:
+```
+attendance-system/
+├── frontend/              # React frontend application
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── pages/        # Page components
+│   │   ├── services/     # API and WebSocket services
+│   │   ├── contexts/     # React contexts
+│   │   └── theme/        # Theme configuration
+│   └── ...
+├── src/                  # NestJS backend application
+│   ├── attendance/       # Attendance module
+│   ├── auth/            # Authentication module
+│   ├── class/           # Class management module
+│   └── ...
+└── ...
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## API Documentation
 
-## Support
+The API documentation is available at `http://localhost:3000/api/docs` when running the backend server.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Contributing
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+Omsherikar - [GitHub](https://github.com/omsherikar)
+
+Project Link: [https://github.com/omsherikar/Attendance_System](https://github.com/omsherikar/Attendance_System)
+
+## Deployment
+
+### Vercel Deployment Requirements
+
+1. **Frontend Requirements**:
+   - Vite configuration for production build
+   - Environment variables set up in Vercel dashboard
+   - Proper CORS configuration for API calls
+   - Build command: `npm run build`
+   - Output directory: `dist`
+
+2. **Backend Requirements**:
+   - NestJS application with proper production configuration
+   - Environment variables for:
+     - MongoDB connection string
+     - JWT secret
+     - Redis URL
+     - API base URL
+   - Build command: `npm run build`
+   - Start command: `npm run start:prod`
+
+3. **Database Requirements**:
+   - MongoDB Atlas account (free tier available)
+   - Redis instance (can use Redis Cloud free tier)
+
+### Vercel Deployment Steps
+
+1. **Frontend Deployment**:
+   ```bash
+   # Install Vercel CLI
+   npm i -g vercel
+
+   # Login to Vercel
+   vercel login
+
+   # Deploy frontend
+   cd frontend
+   vercel
+   ```
+
+2. **Backend Deployment**:
+   ```bash
+   # Deploy backend
+   cd ..
+   vercel
+   ```
+
+3. **Environment Variables Setup**:
+   In Vercel dashboard, add these environment variables:
+   ```
+   # Frontend
+   VITE_API_URL=https://your-backend-url.vercel.app
+
+   # Backend
+   MONGODB_URI=your_mongodb_atlas_uri
+   JWT_SECRET=your_jwt_secret
+   REDIS_URL=your_redis_url
+   NODE_ENV=production
+   ```
+
+4. **Domain Configuration**:
+   - Add custom domain in Vercel dashboard
+   - Configure DNS settings with your domain provider
+   - Set up SSL certificates (automatic with Vercel)
+
+### Vercel Configuration Files
+
+1. **Frontend Vercel Configuration** (`frontend/vercel.json`):
+   ```json
+   {
+     "version": 2,
+     "builds": [
+       {
+         "src": "package.json",
+         "use": "@vercel/static-build",
+         "config": {
+           "distDir": "dist"
+         }
+       }
+     ],
+     "routes": [
+       {
+         "src": "/(.*)",
+         "dest": "/index.html"
+       }
+     ]
+   }
+   ```
+
+2. **Backend Vercel Configuration** (`vercel.json`):
+   ```json
+   {
+     "version": 2,
+     "builds": [
+       {
+         "src": "package.json",
+         "use": "@vercel/node"
+       }
+     ],
+     "routes": [
+       {
+         "src": "/(.*)",
+         "dest": "/src/main.js"
+       }
+     ]
+   }
+   ```
+
+### Post-Deployment Steps
+
+1. Update your frontend's API URL to point to the deployed backend
+2. Test all features in the production environment
+3. Set up monitoring and error tracking
+4. Configure automatic deployments from your GitHub repository
