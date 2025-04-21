@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Grid,
@@ -25,7 +25,9 @@ import ClassManagement from '../components/ClassManagement';
 import AttendanceHistory from '../components/AttendanceHistory';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
-import AttendanceStats from '../components/AttendanceStats.tsx';
+import AttendanceStats from '../components/AttendanceStats';
+import ProfileSection from '../components/ProfileSection';
+import AnimatedBackground from '../components/AnimatedBackground';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,56 +64,7 @@ const containerVariants = {
 
 const itemVariants = {
   initial: { opacity: 0, y: 20 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.3,
-    },
-  },
-};
-
-const AnimatedBackground: React.FC = () => {
-  const theme = useTheme();
-
-  return (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: -1,
-        overflow: 'hidden',
-      }}
-    >
-      {[...Array(3)].map((_, i) => (
-        <motion.div
-          key={i}
-          style={{
-            position: 'absolute',
-            background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 70%)`,
-            borderRadius: '50%',
-            width: '60vw',
-            height: '60vw',
-          }}
-          animate={{
-            x: ['0vw', '10vw', '0vw'],
-            y: ['0vh', '10vh', '0vh'],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 15 + i * 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: i * 5,
-          }}
-          initial={false}
-        />
-      ))}
-    </Box>
-  );
+  animate: { opacity: 1, y: 0 },
 };
 
 const Dashboard: React.FC = () => {
@@ -133,6 +86,8 @@ const Dashboard: React.FC = () => {
     await logout();
     navigate('/login');
   };
+
+  if (!user) return null;
 
   return (
     <Box
@@ -186,6 +141,10 @@ const Dashboard: React.FC = () => {
           initial="initial"
           animate="animate"
         >
+          <motion.div variants={itemVariants}>
+            <ProfileSection user={user} />
+          </motion.div>
+
           {user?.role === 'teacher' && (
             <motion.div variants={itemVariants}>
               <Grid container spacing={3} mb={3}>

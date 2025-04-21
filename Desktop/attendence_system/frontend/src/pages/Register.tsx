@@ -38,7 +38,12 @@ const Register: React.FC = () => {
         return;
       }
       
-      await register(formData);
+      // Create a new object without rollNumber if role is not student
+      const submitData = formData.role === 'student' 
+        ? formData 
+        : { ...formData, rollNumber: undefined };
+      
+      await register(submitData);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');

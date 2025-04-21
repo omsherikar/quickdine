@@ -1,32 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Typography,
+  Button,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
-  Button,
-  Alert,
-  Snackbar,
-  Paper,
+  Typography,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Paper,
   Radio,
   RadioGroup,
   FormControlLabel,
   Stack,
-  CircularProgress,
-  TextField,
+  Alert,
+  Snackbar,
 } from '@mui/material';
-import { format, subDays, isWeekend, startOfMonth } from 'date-fns';
+import { format, subDays, isWeekend } from 'date-fns';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../services/api';
-import { useWebSocket } from '../services/websocket';
 
 interface Student {
   _id: string;
@@ -42,23 +38,19 @@ interface AttendanceRecord {
 
 const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
   const [selectedDate, setSelectedDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+  const [attendanceRecords, setAttendanceRecords] = useState<Record<string, 'PRESENT' | 'ABSENT' | 'LATE'>>({});
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showOfflineSuccess, setShowOfflineSuccess] = useState(false);
-  const [showSyncSuccess, setShowSyncSuccess] = useState(false);
-  const { isConnected, addToSyncQueue } = useWebSocket();
-  const [isOffline, setIsOffline] = useState(true);
-  const [pendingSync, setPendingSync] = useState(false);
 
+  // Fetch students in the class
   const { data: students } = useQuery({
     queryKey: ['students', classId],
     queryFn: async () => {
-      const response = await api.get(`/class/${classId}/students`);
+      const response = await api.get(`/classes/${classId}/students`);
       return response.data;
     },
   });
 
-  const [attendanceRecords, setAttendanceRecords] = useState<Record<string, 'PRESENT' | 'ABSENT' | 'LATE'>>({});
-
+  // Initialize attendance records with all students present
   useEffect(() => {
     if (students) {
       const initialRecords: Record<string, 'PRESENT' | 'ABSENT' | 'LATE'> = {};
@@ -69,58 +61,16 @@ const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
     }
   }, [students]);
 
-  // Update offline status when connection changes
-  useEffect(() => {
-    const updateOfflineStatus = () => {
-      const wasOffline = isOffline;
-      const isCurrentlyOffline = !isConnected;
-      console.log('Connection status update - Was offline:', wasOffline, 'Is offline:', isCurrentlyOffline);
-      setIsOffline(isCurrentlyOffline);
-
-      // If we're coming back online and had pending sync
-      if (wasOffline && !isCurrentlyOffline && pendingSync) {
-        console.log('Connection restored, will sync pending data');
-        setTimeout(() => {
-          setPendingSync(false);
-          setShowSyncSuccess(true);
-        }, 2000);
-      }
-    };
-
-    updateOfflineStatus();
-  }, [isConnected, isOffline, pendingSync]);
-
   const markAttendanceMutation = useMutation({
     mutationFn: async (records: AttendanceRecord[]) => {
-      const currentlyOffline = !isConnected;
-      console.log('Marking attendance - Offline status:', currentlyOffline);
-      
-      if (currentlyOffline) {
-        console.log('Saving attendance offline');
-        // Add to sync queue if offline
-        addToSyncQueue('attendance', {
-          classId,
-          date: selectedDate,
-          records,
-        });
-        setPendingSync(true);
-        return { success: true, offline: true };
-      }
-
-      console.log('Saving attendance online');
-      const response = await api.post('/attendance/bulk', {
+      return await api.post('/attendance/bulk', {
         classId,
         date: selectedDate,
         records,
       });
-      return response.data;
     },
-    onSuccess: (data) => {
-      if (data.offline) {
-        setShowOfflineSuccess(true);
-      } else {
-        setShowSuccess(true);
-      }
+    onSuccess: () => {
+      setShowSuccess(true);
     },
   });
 
@@ -136,7 +86,6 @@ const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
       studentId,
       status,
     }));
-
     markAttendanceMutation.mutate(records);
   };
 
@@ -144,24 +93,11 @@ const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
     setShowSuccess(false);
   };
 
-  const handleCloseOfflineSuccess = () => {
-    setShowOfflineSuccess(false);
-  };
-
-  const handleCloseSyncSuccess = () => {
-    setShowSyncSuccess(false);
-  };
-
-  // Generate dates for the dropdown (last 30 days, excluding weekends)
   const generateDateOptions = () => {
     const dates = [];
-    const today = new Date();
-    const monthStart = startOfMonth(today);
-    
-    for (let i = 0; i <= 30; i++) {
-      const date = subDays(today, i);
-      // Only include dates from the start of the month and exclude weekends
-      if (date >= monthStart && !isWeekend(date)) {
+    for (let i = 6; i >= 0; i--) {
+      const date = subDays(new Date(), i);
+      if (!isWeekend(date)) {
         dates.push(date);
       }
     }
@@ -173,28 +109,10 @@ const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
   return (
     <Box>
       <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Mark Attendance
-        </Typography>
-        {isOffline && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            You are currently offline. Attendance will be synced when you're back online.
-          </Alert>
-        )}
-        {pendingSync && (
-          <Alert severity="info" sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <CircularProgress size={20} sx={{ mr: 1 }} />
-              Syncing offline attendance data...
-            </Box>
-          </Alert>
-        )}
-        <Stack direction="row" spacing={2} alignItems="center">
-          <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel>Date</InputLabel>
+        <Stack spacing={1}>
+          <FormControl fullWidth>
             <Select
               value={selectedDate}
-              label="Date"
               onChange={(e) => setSelectedDate(e.target.value)}
               MenuProps={{
                 PaperProps: {
@@ -237,28 +155,6 @@ const MarkAttendance: React.FC<{ classId: string }> = ({ classId }) => {
       >
         <Alert onClose={handleCloseSuccess} severity="success" sx={{ width: '100%' }}>
           Attendance marked successfully!
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={showOfflineSuccess}
-        autoHideDuration={3000}
-        onClose={handleCloseOfflineSuccess}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseOfflineSuccess} severity="success" sx={{ width: '100%' }}>
-          Attendance saved offline. It will be synced when you're back online.
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        open={showSyncSuccess}
-        autoHideDuration={3000}
-        onClose={handleCloseSyncSuccess}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      >
-        <Alert onClose={handleCloseSyncSuccess} severity="success" sx={{ width: '100%' }}>
-          Offline attendance data has been synced successfully!
         </Alert>
       </Snackbar>
 

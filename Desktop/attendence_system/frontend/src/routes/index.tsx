@@ -5,6 +5,8 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Dashboard from '../pages/Dashboard';
 import Landing from '../pages/Landing';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 const pageVariants = {
   initial: {
@@ -94,6 +96,32 @@ const AppRoutes = () => {
             exit="exit"
           >
             <Register />
+          </motion.div>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <motion.div
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <ForgotPassword />
+          </motion.div>
+        }
+      />
+      <Route
+        path="/reset-password/:token"
+        element={
+          <motion.div
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <ResetPassword />
           </motion.div>
         }
       />

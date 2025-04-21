@@ -9,23 +9,24 @@ import {
   Alert,
   Link,
 } from '@mui/material';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
-const Login: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      navigate('/dashboard');
-    } catch (err) {
-      setError('Invalid email or password');
+      await api.post('/auth/forgot-password', { email });
+      setSuccess(true);
+      setError('');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to send reset email');
+      setSuccess(false);
     }
   };
 
@@ -50,11 +51,16 @@ const Login: React.FC = () => {
           }}
         >
           <Typography component="h1" variant="h5">
-            Sign in
+            Reset Password
           </Typography>
           {error && (
             <Alert severity="error" sx={{ mt: 2, width: '100%' }}>
               {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert severity="success" sx={{ mt: 2, width: '100%' }}>
+              Password reset instructions have been sent to your email.
             </Alert>
           )}
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
@@ -70,29 +76,17 @@ const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Send Reset Link
             </Button>
             <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/forgot-password" variant="body2">
-                Forgot password?
+              <Link component={RouterLink} to="/login" variant="body2">
+                Back to Sign In
               </Link>
             </Box>
           </Box>
@@ -102,4 +96,4 @@ const Login: React.FC = () => {
   );
 };
 
-export default Login; 
+export default ForgotPassword; 

@@ -29,21 +29,41 @@ api.interceptors.response.use(
 );
 
 export const auth = {
-  login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
+  login: async (data: { email: string; password: string }) => {
+    const response = await api.post('/auth/login', data);
     return response.data;
   },
-  register: async (userData: {
-    email: string;
-    password: string;
-    name: string;
-    role: string;
-  }) => {
-    const response = await api.post('/auth/register', userData);
+  register: async (data: { name: string; email: string; password: string; role: string; rollNumber?: string }) => {
+    const response = await api.post('/auth/register', data);
     return response.data;
   },
   getProfile: async () => {
     const response = await api.get('/auth/profile');
+    return response.data;
+  },
+  forgotPassword: async (email: string) => {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  },
+  resetPassword: async (token: string, password: string) => {
+    const response = await api.post('/auth/reset-password', { token, password });
+    return response.data;
+  },
+  updateProfile: async (formData: FormData) => {
+    const response = await api.post('/auth/profile', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response.data;
+  },
+  updatePhoto: async (formData: FormData) => {
+    const response = await api.post('/auth/update-photo', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 };

@@ -3,9 +3,13 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
   const configService = app.get(ConfigService);
 
   // Enable CORS with WebSocket support
@@ -35,13 +39,29 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  // Log all registered routes
+  const server = app.getHttpServer();
+  const router = server._events.request._router;
+  const availableRoutes: [] = router.stack
+    .map(layer => {
+      if (layer.route) {
+        const path = layer.route?.path;
+        const method = layer.route?.stack[0].method;
+        return `${method.toUpperCase()} ${path}`;
+      }
+    })
+    .filter(item => item !== undefined);
+  
+  logger.log('Registered Routes:');
+  availableRoutes.forEach(route => logger.log(route));
+
   // Start the application
   const port = configService.get<number>('PORT') || 3000;
 
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`WebSocket server is running on: ws://localhost:${port}`);
-  console.log(`Swagger documentation is available at: http://localhost:${port}/api`);
+  logger.log(`Application is running on: http://localhost:${port}`);
+  logger.log(`WebSocket server is running on: ws://localhost:${port}`);
+  logger.log(`Swagger documentation is available at: http://localhost:${port}/api`);
 }
 
 bootstrap();
