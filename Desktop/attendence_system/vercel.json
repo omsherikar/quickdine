@@ -1,8 +1,0 @@
-{
-  "version": 2,
-  "framework": "nodejs",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "devCommand": "npm run start:dev"
-} 
