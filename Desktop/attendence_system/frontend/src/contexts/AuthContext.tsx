@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
   id: string;
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -53,24 +55,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = async (email: string, password: string) => {
-    console.log('AuthContext - Attempting login');
-    const { access_token, user } = await auth.login({ email, password });
-    console.log('AuthContext - Login successful, user:', user);
-    localStorage.setItem('token', access_token);
-    setUser(user);
+    try {
+      console.log('Attempting login with:', { email });
+      const { access_token, user } = await auth.login({ email, password });
+      console.log('Login successful, user:', user);
+      localStorage.setItem('token', access_token);
+      setUser(user);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
-  const register = async (userData: {
-    email: string;
-    password: string;
-    name: string;
-    role: string;
-  }) => {
-    console.log('AuthContext - Attempting registration');
-    const { access_token, user } = await auth.register(userData);
-    console.log('AuthContext - Registration successful, user:', user);
-    localStorage.setItem('token', access_token);
-    setUser(user);
+  const register = async (userData: any) => {
+    try {
+      console.log('Attempting registration with:', userData);
+      const { access_token, user } = await auth.register(userData);
+      console.log('Registration successful, user:', user);
+      localStorage.setItem('token', access_token);
+      setUser(user);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
   };
 
   const logout = () => {
