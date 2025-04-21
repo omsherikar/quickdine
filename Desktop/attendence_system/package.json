@@ -1,13 +1,13 @@
 {
   "name": "attendance-system",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Real-time attendance system with offline sync capabilities",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "build:backend": "nest build --config tsconfig.json",
+    "vercel-build": "npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

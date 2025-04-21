@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     console.log('AuthContext - Attempting login');
-    const { access_token, user } = await auth.login(email, password);
+    const { access_token, user } = await auth.login({ email, password });
     console.log('AuthContext - Login successful, user:', user);
     localStorage.setItem('token', access_token);
     setUser(user);
