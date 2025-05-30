@@ -3,9 +3,17 @@ import { supabase } from '@/lib/supabase'
 import { signUp as supabaseSignUp } from '@/lib/auth'
 import type { User } from '@supabase/supabase-js'
 
+interface Restaurant {
+  id: string
+  name: string
+  description: string | null
+  owner_id: string
+  created_at: string
+}
+
 interface AuthState {
   user: User | null
-  restaurant: any | null
+  restaurant: Restaurant | null
   loading: boolean
   error: string | null
   signIn: (email: string, password: string) => Promise<{ error: { message: string } | null }>
@@ -34,13 +42,14 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
       set({ user: data.user, loading: false })
       return { error: null }
-    } catch (error: any) {
-      set({ error: error.message, loading: false })
-      return { error: { message: error.message } }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, loading: false })
+      return { error: { message: errorMessage } }
     }
   },
 
-  signUp: async (email: string, password: string, role: string = 'consumer') => {
+  signUp: async (email: string, password: string, role = 'consumer') => {
     set({ loading: true, error: null })
     try {
       const { data, error } = await supabaseSignUp(email, password, role)
@@ -50,9 +59,10 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
       set({ user: data.user, loading: false })
       return { error: null }
-    } catch (error: any) {
-      set({ error: error.message, loading: false })
-      return { error: { message: error.message } }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, loading: false })
+      return { error: { message: errorMessage } }
     }
   },
 
@@ -63,7 +73,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) throw error
       set({ user: null, restaurant: null, loading: false })
     } catch (error) {
-      set({ error: (error as Error).message, loading: false })
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, loading: false })
     }
   },
 
@@ -74,7 +85,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) throw error
       set({ user, loading: false })
     } catch (error) {
-      set({ error: (error as Error).message, loading: false })
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, loading: false })
     }
   },
 
@@ -93,7 +105,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) throw error
       set({ restaurant: data, loading: false })
     } catch (error) {
-      set({ error: (error as Error).message, loading: false })
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, loading: false })
     }
   },
 })) 

@@ -1,17 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { Restaurant, AnalyticsStats, Order } from "@/types/analytics";
 
 function formatDate(date: Date) {
   return date.toISOString().split("T")[0];
 }
 
 export default function AdminAnalyticsPage() {
-  const [restaurants, setRestaurants] = useState<any[]>([]);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [restaurantId, setRestaurantId] = useState<string | "all">("all");
   const [startDate, setStartDate] = useState<string>(formatDate(new Date()));
   const [endDate, setEndDate] = useState<string>(formatDate(new Date()));
-  const [stats, setStats] = useState<any[]>([]);
+  const [stats, setStats] = useState<AnalyticsStats[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch all restaurants for the admin
@@ -34,7 +35,7 @@ export default function AdminAnalyticsPage() {
   const fetchStats = async () => {
     setLoading(true);
     let restIds = restaurantId === "all" ? restaurants.map(r => r.id) : [restaurantId];
-    let statsArr = [];
+    let statsArr: AnalyticsStats[] = [];
     for (const restId of restIds) {
       // Revenue
       const { data: revenueData } = await supabase
@@ -73,7 +74,6 @@ export default function AdminAnalyticsPage() {
   useEffect(() => {
     if (restaurants.length === 0) return;
     fetchStats();
-    // eslint-disable-next-line
   }, [restaurantId, startDate, endDate, restaurants]);
 
   // Export as CSV
