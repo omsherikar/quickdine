@@ -2,14 +2,9 @@ import { create } from 'zustand'
 import { supabase } from '@/lib/supabase'
 import { signUp as supabaseSignUp } from '@/lib/auth'
 import type { User } from '@supabase/supabase-js'
+import type { Database } from '@/types/database'
 
-interface Restaurant {
-  id: string
-  name: string
-  description: string | null
-  owner_id: string
-  created_at: string
-}
+type Restaurant = Database['public']['Tables']['restaurants']['Row']
 
 interface AuthState {
   user: User | null
@@ -49,7 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signUp: async (email: string, password: string, role = 'consumer') => {
+  signUp: async (email: string, password: string, role: string = 'consumer') => {
     set({ loading: true, error: null })
     try {
       const { data, error } = await supabaseSignUp(email, password, role)

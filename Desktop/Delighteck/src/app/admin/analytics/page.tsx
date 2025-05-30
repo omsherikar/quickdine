@@ -1,7 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Restaurant, AnalyticsStats, Order } from "@/types/analytics";
+
+interface Restaurant {
+  id: string;
+  name: string;
+  description: string | null;
+  owner_id: string;
+  created_at: string;
+}
+
+interface AnalyticsStats {
+  restaurant: string;
+  revenue: number;
+  orders: number;
+  customers: number;
+}
 
 function formatDate(date: Date) {
   return date.toISOString().split("T")[0];
@@ -34,8 +48,8 @@ export default function AdminAnalyticsPage() {
   // Fetch stats for the selected restaurant(s) and date range
   const fetchStats = async () => {
     setLoading(true);
-    let restIds = restaurantId === "all" ? restaurants.map(r => r.id) : [restaurantId];
-    let statsArr: AnalyticsStats[] = [];
+    const restIds = restaurantId === "all" ? restaurants.map(r => r.id) : [restaurantId];
+    const statsArr: AnalyticsStats[] = [];
     for (const restId of restIds) {
       // Revenue
       const { data: revenueData } = await supabase
@@ -74,6 +88,7 @@ export default function AdminAnalyticsPage() {
   useEffect(() => {
     if (restaurants.length === 0) return;
     fetchStats();
+    // eslint-disable-next-line
   }, [restaurantId, startDate, endDate, restaurants]);
 
   // Export as CSV

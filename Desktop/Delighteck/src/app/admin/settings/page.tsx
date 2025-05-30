@@ -255,6 +255,20 @@ export default function AdminSettingsPage() {
               <BuildingStorefrontIcon className="w-6 h-6" /> Restaurant Settings
             </h2>
             <form onSubmit={handleSave} className="space-y-6">
+              {/* Dropdown to select restaurant */}
+              <div>
+                <label className="block text-sm font-bold text-indigo-100 mb-1">Select Restaurant</label>
+                <select
+                  value={restaurantId || ''}
+                  onChange={e => setRestaurantId(e.target.value)}
+                  className="block w-full rounded-xl border border-indigo-300 bg-white/20 text-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 text-base shadow-sm backdrop-blur-md transition"
+                  required
+                >
+                  {restaurants.map((rest: any) => (
+                    <option key={rest.id} value={rest.id}>{rest.name}</option>
+                  ))}
+                </select>
+              </div>
               <div>
                 <label className="block text-sm font-bold text-indigo-100 mb-1">Restaurant Name</label>
                 <input
